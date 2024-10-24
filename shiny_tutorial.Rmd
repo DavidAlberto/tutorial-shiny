@@ -1,0 +1,447 @@
+---
+title: "shiny-tutorial"
+author: "David Alberto García Estrada"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introducción
+
+## Desarrollo web
+
+Conceptos
+
+[**Página web estática**](https://en.wikipedia.org/wiki/Static_web_page):
+
+Algunas veces llamada página plana o estacionaria, es una página web que es entregada al navegador exactamente como está almacenada.
+
+![](/home/davidalbertoge/Documents/Code/github.com/tutorial-shiny/image/Scheme_static_page.png){style="display: block; margin-left: auto; margin-right: auto; width: 60%"}
+
+[**Página web dinámica**](https://en.wikipedia.org/wiki/Dynamic_web_page):
+
+Es una página cuya construcción en tiempo de ejecución. Una **página web dinámica del lado del servidor** es una página cuya construcción está controlada por un servidor de aplicaciones que procesa scripts del lado del servidor.
+
+![](/home/davidalbertoge/Documents/Code/github.com/tutorial-shiny/image/Scheme_dynamic_page.png){style="display: block; margin-left: auto; margin-right: auto; width: 60%"}
+
+[**Aplicación web**](https://en.wikipedia.org/wiki/Web_application):
+
+Es un programa que es almacenado en un servidor remoto y distribuye a través del internet mediante una interfaz de navegador.
+
+[**Web framework**](https://en.wikipedia.org/wiki/Web_framework):
+
+Tambien llamado framework para aplicaciones web, es una colección de paquetes o módulos los cuales permiten a los desarroladores escribir aplicaciones web o servicios sin tener que manejar detalles de bajo nivel como protocolos, sockets o gestión de procesos/subprocesos.
+
+[**Desarrollo web Front-end**](https://en.wikipedia.org/wiki/Front-end_web_development):
+
+Es el desarrollo de una interfaz gráfica o un sitio web mediante el uso de HTML, CSS, y JavaScript para que los usuarios peudan ver e interacturar con el sitio web.
+
+[**Desarrollo web Back-end**](https://en.wikipedia.org/wiki/Frontend_and_backend):
+
+Es el desarrollo de la [capa de acceso de datos](https://en.wikipedia.org/wiki/Data_access_layer) de un sitio web.
+
+## ¿Qué es y para qué sirve **Shiny**?
+
+![](/home/davidalbertoge/Documents/Code/github.com/tutorial-shiny/image/shiny.png){style="display: block; margin-left: auto; margin-right: auto; width: 30%"}
+
+[Shiny](https://shiny.posit.co/) es una un framwork de aplicación web para [R](https://www.r-project.org/) y [Python](https://www.python.org/) que permite generar módulos web interactivos, crear interfaces para algorítmos o bien manipular en tiempo real tablas de datos y gráficos a través de controles de HTML.
+
+**¿Por qué usar Shiny?**
+
+### Instalación
+
+Para instalar la paquetería se deben usar el siguiente código
+
+```{r install, eval=FALSE, include=TRUE}
+install.packages("shiny")
+```
+
+## Estructura
+
+Toda aplicación web de Shiny tendrá dos bloques de códigos de R:
+
+-   *ui*: genera una interfaz de usuario.
+-   *server*: contiene las intrucciones que la computadora necesita para crear la app.
+
+La estructura de código de una app Shiny se verá de la siguiente manera:
+
+```{r Shiny structure, eval=FALSE, include=TRUE}
+library(shiny)
+
+ui <- fluidPage(
+  Input(),
+  Output()
+)
+
+server <- function(input, output){
+  código de R
+}
+  
+shinyApp(ui = ui, server = server)
+```
+
+En RStudio se puede generar una nueva app con este molde de código mediante los siguientes pasos:
+
+1.  Cerar un nuevo directorio y un archivo app.R que contenga una aplicación básica en un solo paso haciendo clic en *Archivo* \> *Nuevo proyecto* \> *Nuevo directorio* \> *Shiny Web*.
+2.  Una vez creado el archivo **app.R**, se puede agregar la estructura estandar escribiendo `shinyapp` luego presiona la tecla `Tab`.
+3.  También se pueden hacer dos scripts independientes, **ui.R** y **server.R**, y ejecuar ambos en al app.R con `shinyApp(ui = ui.R, server = server.R)`.
+
+## Interfaz de Usuario (UI)
+
+Shiny por default usa [Bootstrap](https://en.wikipedia.org/wiki/Bootstrap_(front-end_framework)) (no es el método estadístico [Bootstrapping](https://en.wikipedia.org/wiki/Bootstrapping_(statistics))). Esto es un marco de trabajo HTML, CSS y Javascript más popular para desarrollar sitios web receptivos.
+
+Shiny fomenta la separación del código que genera la interfaz de usuario (front-end) del código que impulsa el comportamiento de la aplicación (back-end).
+
+![](/home/davidalbertoge/Documents/Code/github.com/tutorial-shiny/image/back_front.png){style="display: block; margin-left: auto; margin-right: auto; width: 50%"}
+
+Existe una gran comunidad de paquetes de extensión una de ellas es [awesome-shiny-extensions](https://github.com/nanxstats/awesome-shiny-extensions), mantenida por [Nan Xiao](https://github.com/nanxstats).
+
+Para iniciar a enteder como funciona la interfaz de usuario, en un archivo `app.R` realiza lo siguiente:
+
+```{r Hola mundo, eval=FALSE, include=TRUE}
+library(shiny)
+
+ui <- fluidPage(
+  "¡Hola mundo!"
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
+```
+
+Corre la app con el botón `Run App` o en la línea de comandos de R corre la siguiente línea `shinyapp(ui, server)`.
+
+Deberás ver algo similar a esto
+
+![](/home/davidalbertoge/Documents/Code/github.com/tutorial-shiny/image/hola_mundo.png){style="display: block; margin-left: auto; margin-right: auto; width: 40%"}
+
+### Layouts más comunes
+
+Vamos a mejorar la función anterior, agregando lo siguiente:
+
+```{r Layouts_title, eval=FALSE, include=TRUE}
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Mi app de Hola mundo"),
+  "¡Hola mundo!"
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
+```
+
+Ahora agrega la siguiente función `sidebarLayout`:
+
+```{r Layouts_title_panel, eval=FALSE, include=TRUE}
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Mi app de Hola mundo"),
+  sidebarLayout(
+    sidebarPanel("Este es el sidebar panel de mi app \"Hola mundo\", y aquí van mis controles de \"INPUT\""),
+    mainPanel("Este es el main panel de mi app \"Hola mundo\" y aqui van mis controles de \"OUTPUT\"")
+  ),
+  "¡Hola mundo!"
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
+```
+
+Deberás ver algo similar a esto
+
+![](/home/davidalbertoge/Documents/Code/github.com/tutorial-shiny/image/hola_mundo_layout.png){style="display: block; margin-left: auto; margin-right: auto; width: 60%"}
+
+A medida que la aplicación crece en complejidad, puede resultar complejo ajustar todo en una sola página. Para este tipo de situaciónes es útil el uso de funciones como `tabPanel()` que crea la múltiples páneles, en una única página.
+
+```{r Paneles_tabset, eval=FALSE, include=TRUE}
+library(shiny)
+
+ui <- fluidPage(
+  tabsetPanel(
+        tabPanel("Pestaña 1", "Aqui hay un hola mundo, y se ponen los inputs"),
+        tabPanel("Pestaña 2", "lo mismo que en la pestaña 1"),
+        tabPanel("Pestaña 3", "Vamos a jugar con más")
+    )
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
+```
+
+Deberás ver algo similar a esto
+
+![](/home/davidalbertoge/Documents/Code/github.com/tutorial-shiny/image/hola_mundo_paneles.png){style="display: block; margin-left: auto; margin-right: auto; width: 60%"}
+
+Otro layout son las listas de navegación o barras de navegación. Debido a que las pestañas se muestran horizontalmente, existe un límete fundamental en la cantidad de pestañas que se puede usar, especialmente si son títulos largos.
+
+Las funciones `navbarPage()` y `navbarMenu()`, proporcionan dos diseños alternativos que les permite usar más pestañas con títutos más largos. La función `navlistPanel()` es similar a `tabsetPanel()`, pero en lugar de ejecutar los títulos en las pestañas horizontalmente, los muestra veerticalmente en una barra lateral.
+
+```{r Paneles_navlist, eval=FALSE, include=TRUE}
+library(shiny)
+
+ui <- fluidPage(
+    navlistPanel(
+        tabPanel("Pestaña 1", "Aqui hay un hola mundo, y se ponen los inputs"),
+        tabPanel("Pestaña 2", "lo mismo que en la pestaña 1"),
+        tabPanel("Pestaña 3", "Vamos a jugar con más")
+    )
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
+```
+
+Deberás ver algo similar a esto
+
+![](/home/davidalbertoge/Documents/Code/github.com/tutorial-shiny/image/hola_mundo_navlist.png){style="display: block; margin-left: auto; margin-right: auto; width: 60%"}
+
+Otra alternativa
+
+```{r Paneles_navbar, eval=FALSE, include=TRUE}
+library(shiny)
+
+ui <- navbarPage(
+    "ESTO ES UN TITULO DE MI APP HOLA MUNDO",
+    tabPanel("Pestaña 1", "Aqui hay un hola mundo, y se ponen los inputs"),
+    tabPanel("Pestaña 2", "lo mismo que en la pestaña 1"),
+    tabPanel("Pestaña 3", "Vamos a jugar con más"),
+    navbarMenu("Estos podrian ser subpaneles",
+               tabPanel("Lo viste?? es genial", "y esto es??.."))
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
+```
+
+Deberás ver algo similar a esto
+
+![](/home/davidalbertoge/Documents/Code/github.com/tutorial-shiny/image/hola_mundo_navbar.png){style="display: block; margin-left: auto; margin-right: auto; width: 60%"}
+
+Con estas funciones en la **UI** podemos modificar los paneles:
+
+```{r Paneles_funciones, eval=FALSE, include=TRUE}
+absolutePanel()
+conditionalPanel()
+fixedPanel()
+headerPanel()
+inputPanel()
+mainPanel()
+navlistPanel()
+sidebarPanel()
+tabPanel()
+tabsetPanel()
+titlePanel()
+wellPanel()
+```
+
+Aquí hay una guia de uso de diferentes [**Layouts**](https://shiny.posit.co/r/articles/build/layout-guide/)
+
+### Controles de Input
+
+Estos son los controles de input más comunes:
+
+```{r Controles_input, echo=FALSE}
+tabla_inputs <- data.frame(Función = c("actionButton()", "checkboxGroupInput()",
+                                       "checkboxInput()", "dateInput()",
+                                       "dateRangeInput()", "fileInput()", 
+                                       "helpText()", "numericInput()", 
+                                       "radioButtons()", "selectInput()",
+                                       "sliderInput()", "submitButton()", 
+                                       "textInput()"),
+                           Widget = c("boton de accion", "Grupo de cajas para checar", 
+                                      "una sola caja para checar", "Un calendario para seleccionar fecha",
+                                      "Par de calendarios para seleccionar un rango de fecha",
+                                      "Asistente de control de carga de archivos",
+                                      "Texto de ayuda que se puede agregar a un formulario de entrada",
+                                      "Un campo para ingresar numeros", "Un conjunto de botones de radio",
+                                      "Un cuadro con opciones para elegir", "Una barra lateral",
+                                      "Un boton de enviar", "Un campo para ingresar texto"))
+
+library(knitr)
+
+kable(tabla_inputs)
+```
+
+Preview de Controles de Input ![](/home/davidalbertoge/Documents/Code/github.com/tutorial-shiny/image/table_inputs.png){style="display: block; margin-left: auto; margin-right: auto"}
+
+Probemos con algunos
+
+```{r Control_inputs, eval=FALSE, include=TRUE}
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Mi app hola mundo!"),
+  sidebarLayout(
+    sidebarPanel(
+      numericInput("numInput", "Un input numerico:", value = 7, min = 1, max = 30)
+    ),
+    mainPanel(
+        "este es el main panel de mi app hola mundo, y aqui van mis controles de OUTPUT"
+     )
+  ),
+"Hola MUNDO"
+)
+
+server <- function(input, output, session) {
+  
+}
+shinyApp(ui, server)
+```
+
+Deberás ver algo similar a esto
+
+![](/home/davidalbertoge/Documents/Code/github.com/tutorial-shiny/image/control_input.png){style="display: block; margin-left: auto; margin-right: auto; width: 60%"}
+
+### Controles de Output
+
+Estás son algunas funciones de control de outputs
+
+```{r Controles_output, echo=FALSE}
+tabla_outputs <- data.frame(Función = c("dataTableOutput()", "htmlOutput()",
+                                        "imageOutput()", "plotOutput()",
+                                        "tableOutput()", "textOutput()",
+                                        "uiOutput()", "verbatimTextOutput()"),
+                            Output = c("una tabla interactiva", "HTML sin formato",
+                                       "imagen", "gráfico", "tabla", "texto",
+                                       "un elemento Shiny UI", "texto"))
+
+library(knitr)
+
+kable(tabla_outputs)
+```
+
+Los outputs tienen un efecto directo con la renderización de los resultados. En los outputs se específica el nombre o ID de las salidas y el tipo de salida que será.
+
+```{r Control_outputs, eval=FALSE, include=TRUE}
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Mi app hola mundo!"),
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput(inputId = "num",
+                  label = "Selecciona un numero",
+                  value = 14, min = 1, max = 200),
+      plotOutput("identificador_de_mi_output") # <- "Aquí va el identificador del plot"
+    ),
+    mainPanel(
+        "este es el main panel de mi app hola mundo, y aqui van mis controles de OUTPUT"
+     )
+  ),
+"Hola MUNDO"
+)
+
+server <- function(input, output, session) {
+  
+}
+
+shinyApp(ui, server)
+```
+
+Deberás ver algo similar a esto
+
+![](/home/davidalbertoge/Documents/Code/github.com/tutorial-shiny/image/control_output.png){style="display: block; margin-left: auto; margin-right: auto; width: 60%"}
+
+## El Servidor (Server)
+
+El servidor permite especificar como ensamblar los inputos en los outputs.
+
+Hay 3 reglas para escribir código en el **server**:
+
+1.  Especifica con `output$` + `ID output` cada objeto dentro de `server`.
+2.  Cada objeto se mostrará con un `render()`, por ejemplo, `renderPlot({})`.
+3.  Accesa a los valores de los inputos con `input$` + `ID input`.
+
+```{r server_funciones, echo=FALSE}
+tabla_server <- data.frame(Función = c("renderDataTable()", "renderImage()",
+                                        "renderPlot()", "renderPrint()",
+                                        "renderTable()", "renderText()",
+                                        "renderUI()"),
+                            Output = c("una tabla interactiva", 
+                                       "una imagen (guardada como un enlace a un archivo funte)",
+                                       "un gráfico", "un bloque de código de salida impreso",
+                                       "una tabla", "un texto", "un elemento Shiny UI"))
+
+library(knitr)
+
+kable(tabla_server)
+```
+
+Mejoraremos la app de **Hola Mundo** añadiendo *reactividad*:
+
+```{r Server, eval=FALSE, include=TRUE}
+library(shiny)
+
+ui <- fluidPage(
+  titlePanel("Mi app hola mundo!"),
+  sidebarLayout(
+    sidebarPanel(
+      sliderInput(inputId = "num",
+                  label = "Selecciona un numero",
+                  value = 14, min = 1, max = 200)
+    ),
+    mainPanel(
+        "este es el main panel de mi app hola mundo, y aqui van mis controles de OUTPUT", 
+        plotOutput("identificador_de_mi_output")
+     )
+  ),
+"Hola MUNDO"
+)
+
+server <- function(input, output, session) {
+    output$identificador_de_mi_output <- renderPlot({
+        library(ggplot2)
+        var_1 <- rnorm(input$num)
+        var_2 <- data.frame(norma = var_1)
+        
+        ggplot(var_2, aes(x = norma)) +
+          geom_density() + 
+          theme_classic()
+    })
+}
+
+shinyApp(ui, server)
+```
+
+Deberás ver algo similar a esto
+
+![](/home/davidalbertoge/Documents/Code/github.com/tutorial-shiny/image/input_output.png){style="display: block; margin-left: auto; margin-right: auto; width: 60%"}
+
+La reactividad funciona de la siguiente manera:
+
+![](/home/davidalbertoge/Documents/Code/github.com/tutorial-shiny/image/reactividad.png){style="display: block; margin-left: auto; margin-right: auto; width: 50%"}
+
+## Presentación Resumen
+
+Autor: **Alejandro Reyes**
+
+[
+
+```{r, echo=FALSE}
+knitr::include_url("https://docs.google.com/presentation/d/137IVaGW9I7Wc8-2M0Jx8BlUBYsIjEAH6xHCuBPp5vIU/embed?", height="420px")
+```
+
+](<https://https://docs.google.com/presentation/d/137IVaGW9I7Wc8-2M0Jx8BlUBYsIjEAH6xHCuBPp5vIU/embed>?)
